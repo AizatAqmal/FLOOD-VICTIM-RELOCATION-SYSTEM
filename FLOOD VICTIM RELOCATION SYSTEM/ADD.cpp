@@ -10,7 +10,7 @@ string ppsbil[100];
 void victim();
 void admin();
 void addpps();
-//void summary();
+void summary();
 
 int main()
 {
@@ -160,3 +160,48 @@ void addpps()
 	}
 }
 ;
+void summary()
+{
+	ifstream readMaster("all_location.txt");
+
+	if (!readMaster.is_open())
+	{
+		cout << "Error: No database found or file missing." << endl;
+		return;
+	}
+
+	string name;
+	int capacity, current;
+	int totalVictims = 0;
+	int totalCapacity = 0;
+
+	cout << "\n==============================================" << endl;
+	cout << "      RELOCATION CENTERS STATUS REPORT        " << endl;
+	cout << "==============================================" << endl;
+
+	cout << left << setw(20) << "PPS NAME"
+		<< setw(15) << "OCCUPIED"
+		<< setw(15) << "CAPACITY" << endl;
+	cout << "----------------------------------------------" << endl;
+
+	if (readMaster >> name >> capacity >> current)
+	{
+		do
+		{
+			cout << left << setw(20) << name
+				<< setw(15) << current
+				<< setw(15) << capacity << endl;
+
+			totalVictims += current;
+			totalCapacity += capacity;
+
+		} while (readMaster >> name >> capacity >> current);
+	}
+
+	readMaster.close();
+
+	cout << "----------------------------------------------" << endl;
+	cout << "TOTAL STATEWIDE VICTIMS: " << totalVictims << endl;
+	cout << "TOTAL STATE CAPACITY:    " << totalCapacity << endl;
+	cout << "==============================================" << endl;
+}
