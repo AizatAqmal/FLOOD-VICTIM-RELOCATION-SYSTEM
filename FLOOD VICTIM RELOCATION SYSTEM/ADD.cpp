@@ -177,3 +177,90 @@ void addpps()
 	}
 }
 ;
+void viewVictims()
+{
+    char repeat;
+
+    do {
+        ifstream readMaster("all_location.txt");
+        if (!readMaster.is_open())
+        {
+            cout << "\n[!] No PPS data available." << endl;
+            return;
+        }
+
+        vector<Center> centers;
+        string name;
+        int cap, curr;
+        int count = 0;
+
+        cout << "\n--- SELECT PPS TO VIEW ---" << endl;
+        while (readMaster >> name >> cap >> curr)
+        {
+            Center c;
+            c.name = name;
+            centers.push_back(c);
+            cout << count + 1 << ". " << name << endl;
+            count++;
+        }
+        readMaster.close();
+
+        if (count == 0) {
+            cout << "No centers found." << endl;
+            return;
+        }
+
+        int choice;
+        cout << "Select PPS number: ";
+        cin >> choice;
+        int index = choice - 1;
+
+        if (index < 0 || index >= count)
+        {
+            cout << "[!] Invalid selection!" << endl;
+        }
+        else 
+        {
+            string filename = centers[index].name + ".txt";
+            ifstream ppsFile(filename);
+
+            if (!ppsFile.is_open())
+            {
+                cout << "[!] No victims registered at " << centers[index].name << " yet." << endl;
+            }
+            else 
+            {
+                string vicIC, vicName;
+
+                cout << "\n------------------------------------------------------------" << endl;
+                cout << " LIST OF VICTIMS AT: " << centers[index].name << endl;
+                cout << "------------------------------------------------------------" << endl;
+                cout << left << setw(5) << "No." << setw(20) << "IC Number" << "Name" << endl;
+                cout << "------------------------------------------------------------" << endl;
+
+                int vCount = 0;
+
+                while (ppsFile >> vicIC)
+                {
+                    getline(ppsFile, vicName);
+
+                    vCount++;
+                    cout << left << setw(5) << vCount
+                        << setw(20) << vicIC
+                        << vicName << endl;
+                }
+
+                if (vCount == 0) {
+                    cout << "   (No victims found in this list)" << endl;
+                }
+
+                cout << "------------------------------------------------------------" << endl;
+                ppsFile.close();
+            }
+        }
+
+        cout << "\nDo you want to view another PPS record? (y/n): ";
+        cin >> repeat;
+
+    } while (repeat == 'y' || repeat == 'Y');
+}
